@@ -1,14 +1,26 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import TodosContext from "../context";
 
 function TodoForm() {
     const [todo, setTodo] = useState("");
-    const { state, dispatch } = useContext(TodosContext);
+    const { state: { currentTodo = {} }, dispatch } = useContext(TodosContext);
+
+    useEffect(() => {
+        if (currentTodo.text) {
+            setTodo(currentTodo.text)
+        }   else {
+            setTodo("")
+        }
+    }, [currentTodo.id])
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        dispatch({ type: "ADD_TODO", payload: todo });
-        setTodo("")
+        if (currentTodo.text) {
+            dispatch({ type: "UDPATE_TODO", payload: todo }) 
+        }   else {
+            dispatch({ type: "ADD_TODO", payload: todo })
+        }
+        setTodo("");
     };
     return (
         <form onSubmit={handleSubmit} className="flex justify-center p-5">
